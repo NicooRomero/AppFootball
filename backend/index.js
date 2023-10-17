@@ -32,6 +32,7 @@ const api = process.env.API_URL;
 app.use(`${api}/user`, require('./routes/user'));
 app.use(`${api}/team`, require('./routes/team'));
 app.use(`${api}/tournament`, require('./routes/tournament'));
+app.use(`${api}/notifications`, require('./routes/notifications'));
 
 // App Port
 const port = process.env.PORT

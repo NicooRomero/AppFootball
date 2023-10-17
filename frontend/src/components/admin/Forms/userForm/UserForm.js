@@ -21,6 +21,7 @@ export default function UserForm(props) {
             if (data) {
                 const result = await editApiPlayer(idUser, formData);
                 if (result?.status === 200) {
+                    setReloadUser(true);
                     toast.success(result.message);
                 } else {
                     toast.error(result.message);

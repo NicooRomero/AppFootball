@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Nav from '@/components/admin/Nav';
-import { useRouter } from 'next/router';
+import Router from 'next/router'
 import useAuth from '@/hooks/useAuth';
+import { getAccToken } from '@/api/auth';
 
 export default function AdminLayout({ children }) {
-
     const { user, isLoading } = useAuth();
+    // console.log(user);
+    // console.log(isLoading);
 
-    if (!user & !isLoading) {
-        const router = useRouter();
-        router.push('/admin/login');
-    }
+    useEffect(() => {
+            const token = getAccToken()
+            if (!token) {
+                typeof window !== 'undefined' && Router.push('/admin/login');
+            }
+    }, [])
+
+    // if (!user && isLoading) {
+    //     typeof window !== 'undefined' && Router.push('/admin/login');
+    // }
 
     if (user && !isLoading) {
         return (
-            <div className='bg-gray-950 w-screen min-h-screen flex '>                
+            <div className='bg-gray-950 min-h-screen flex '>
                 <Nav />
-                <div className="text-black bg-gray-950 flex-grow mt-12 ml-52 mr-2 p-4">
+                <div className="text-black bg-gray-950 flex-grow mt-12 ml-52 p-4">
                     {children}
                 </div>
             </div>

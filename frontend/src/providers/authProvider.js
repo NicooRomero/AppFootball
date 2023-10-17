@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState, createContext } from 'react';
 import { getAccToken, getRefToken, refreshAccessToken, logout } from '@/api/auth';
 import jwtDecode from 'jwt-decode';
@@ -6,7 +7,8 @@ export const AuthContext = createContext();
 
 export default function AuthProvider(props) {
     const { children } = props;
-    const [ user, setUser ] = useState({
+
+    const [user, setUser] = useState({
         user: null,
         isLoading: true
     });
@@ -15,30 +17,61 @@ export default function AuthProvider(props) {
         checkUserLogin(setUser);
     }, []);
 
-    return <AuthContext.Provider value={user} >
-                {children}
-            </AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={user}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
-function checkUserLogin(setUser) {
+async function checkUserLogin(setUser) {
     const accessToken = getAccToken();
 
-    if(!accessToken) {
+    if (!accessToken) {
         const refreshToken = getRefToken();
 
-        if(!refreshToken) {
+        if (!refreshToken) {
             logout();
             setUser({
                 user: null,
-                isLoading: false
+                isLoading: true
             });
         } else {
-            refreshAccessToken(refreshToken);
+            try {
+                const newAccessToken = await refreshAccessToken(refreshToken);
+                if(newAccessToken) {
+                    setUser({
+                        isLoading: false,
+                        user: jwtDecode(newAccessToken)
+                    });
+                } else {
+                    setUser({
+                        user: null,
+                        isLoading: true
+                    });
+                    logout();
+                }
+            } catch (error) {
+                logout();
+                setUser({
+                    user: null,
+                    isLoading: true
+                });
+            }
         }
     } else {
-        setUser({
-            isLoading: false,
-            user: jwtDecode(accessToken)
-        });
+        if(accessToken) {
+            setUser({
+                isLoading: false,
+                user: jwtDecode(accessToken)
+            });
+        } else {
+            logout();
+            setUser({
+                user: null,
+                isLoading: true
+            });
+        }        
     }
 }
+

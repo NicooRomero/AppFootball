@@ -1,35 +1,49 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN, DATA_USER } from '../utils/const';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../utils/const';
 import jwtDecode from 'jwt-decode';
 
 const baseURL = 'http://localhost:4000/api/v1/';
 
 export function getAccToken() {
-    if (typeof window !== 'undefined') {
-        const accessToken = localStorage.getItem(ACCESS_TOKEN);
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
 
-        if (!accessToken || accessToken === 'null') {
-            logout();
-            return null;
+    if(accessToken) {
+        const expired = willExpireToken(accessToken);
+        console.log(expired);
+        if(!expired) {
+            return accessToken;
         }
-
-        return willExpireToken(accessToken) ? null : accessToken;
+    } else {
+        return;
     }
+    // if(!accessToken || accessToken === 'null') {
+    //     return;
+    // }
 
-    return null;
+    //return willExpireToken(accessToken) ? null : accessToken;
 }
 
 export function getRefToken() {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+    
+    if(refreshToken) {
+        const expired = willExpireToken(refreshToken);
+        console.log(expired);
+        if(!expired) {
+            return refreshToken;
+        }
 
-    if(!refreshToken || refreshToken === 'null') {
-        return null;
+    } else {
+        return;
     }
 
-    return willExpireToken(refreshToken) ? null : refreshToken;
+    // if(!refreshToken || refreshToken === 'null') {
+    //     return;
+    // }
+
+    //return willExpireToken(refreshToken) ? null : refreshToken;
 }
 
 export function refreshAccessToken(refreshToken) {
-
     const url = `${baseURL}/auth/refresh-access-token`;
 
     const bodyObj = {
@@ -44,22 +58,28 @@ export function refreshAccessToken(refreshToken) {
         }
     };
 
-    fetch(url, params)
+    return fetch(url, params)
         .then(response => {
-            if(response.status !== 200) {
-                return null;
+            if (response.status !== 200) {
+                throw new Error("Error al refrescar el token");
             }
             return response.json();
         })
         .then(result => {
-            if(!result) {
-                logout();
+            if (!result || !result.accessToken) {
+                throw new Error("Token de acceso no válido");
             } else {
                 const { accessToken, refreshToken } = result;
                 localStorage.setItem(ACCESS_TOKEN, accessToken);
                 localStorage.setItem(REFRESH_TOKEN, refreshToken);
+                return accessToken;
             }
         })
+        .catch(error => {
+            console.error("Error al refrescar el token:", error);
+            logout();
+            throw error;
+        });
 }
 
 export function logout() {
@@ -69,7 +89,7 @@ export function logout() {
 
 function willExpireToken(token) {
     const seconds = 60;
-    const metaToken = jwtDecode(token);
+    const metaToken = token ? jwtDecode(token) : null;
     const { exp } = metaToken;
     const now = (Date.now() + seconds) / 1000;
     return now > exp;

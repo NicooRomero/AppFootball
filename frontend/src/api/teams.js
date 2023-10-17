@@ -19,17 +19,32 @@ export async function getApiTeams() {
 
 // Add player to team
 export async function addPlayerToTeam(data) {
-    const result = clientAxios.post('/team/add-player', data,{
+    const result = clientAxios.post('/team/send-request', data,{
         headers: {
             'Content-Type': 'application/json'
         }
     })
     .then(response => {
-        console.log(response);
         return response
     })
     .catch(err => {
-        console.log(err);
+        return err
+    })
+
+    return result;
+}
+
+// Accept request to join team
+export async function acceptJoinTeam(data) {
+    const result = clientAxios.post('/team/accept-request', data,{
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        return response
+    })
+    .catch(err => {
         return err
     })
 

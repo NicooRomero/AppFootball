@@ -23,7 +23,7 @@ export default function LoginForm() {
 
                 toast.success('Login correcto.');
 
-                setTimeout(() => window.location = '/admin/dashboard', 2500);
+                setTimeout(() => window.location = '/admin/dashboard', 1500);
 
             } else {
                 toast.error(result.response.data.message)

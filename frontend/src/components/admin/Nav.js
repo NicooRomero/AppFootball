@@ -5,10 +5,12 @@ import { ACCESS_TOKEN } from '@/utils/const';
 import jwtDecode from 'jwt-decode';
 import { logout } from '@/api/auth';
 import { getApiPlayer } from '@/api/user';
+import { useUserContext } from '@/hooks/UserContext';
 
 
 export default function Nav() {
 
+    const { reload } = useUserContext();
     const [player, setPlayer] = useState();
     const [hidden, setHidden] = useState(true);
 
@@ -25,11 +27,11 @@ export default function Nav() {
             const data = await getApiPlayer(token.id);
             setPlayer(data);
         })();
-    }, []);
+    }, [reload]);
 
     return (
         <>
-            <nav  className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div className="px-3 py-3 lg:px-5 lg:pl-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center justify-start">
@@ -69,7 +71,7 @@ export default function Nav() {
                                             <Link href={`/admin/profile?user=${token.id}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Profile</Link>
                                         </li>
                                         <li>
-                                            <Link href={"/admin/login"} onClick={() => logout()}  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</Link>
+                                            <Link href={"/admin/login"} onClick={() => logout()} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</Link>
                                         </li>
                                     </ul>
                                 </div>
@@ -115,6 +117,9 @@ export default function Nav() {
                                 <span className="flex-1 ml-3 whitespace-nowrap">Tournament</span>
                             </Link>
                         </li>
+                    </ul>
+                    <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+
                     </ul>
                 </div>
             </aside>

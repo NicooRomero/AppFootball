@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getAccToken } from '@/api/auth';
 import LoginForm from '../../components/admin/Forms/loginForm/LoginForm';
 
 export default function Login() {
 
-    if (getAccToken()) {
-        const router = useRouter();
-        router.push('/admin/dashboard');
-    } 
+    const router = useRouter();
+
+    useEffect(() => {
+        if (getAccToken()) {
+            router.push('/admin/dashboard');
+        }
+    }, []);
 
     return (
         <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">

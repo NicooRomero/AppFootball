@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import moment from 'moment/moment';
 import toast from 'react-hot-toast';
 import Player from './Player/Player';
-import { addPlayerToTeam } from '@/api/teams';
 import useAuth from '@/hooks/useAuth';
 import ReactPaginate from 'react-paginate';
+import { addPlayerToTeam } from '@/api/teams';
 import UserForm from '../Forms/userForm/UserForm';
 import BasicModal from '@/components/Modal/BasicModal';
 
 export default function TablePlayers(props) {
 
     const { user } = useAuth();
+    
     const { players, setReloadUser } = props;
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState('');
@@ -63,12 +64,12 @@ export default function TablePlayers(props) {
                     const response = await addPlayerToTeam(data)
                     if(response.status === 200) {
                         Swal.fire(
-                            'Player Added!',
-                            'The player has been added to your team.',
+                            'Request sent!',
+                            'The request to join your team has been sent.',
                             'success'
                         );
                     } else {
-                        toast.error('User canceled the operation.');
+                        toast.error(response.response.data.message);
                     }                    
                 }
             });
