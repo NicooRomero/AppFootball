@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import NoProfileImage from '../../../../../public/png/no-profile.png';
 
 export default function Player(props) {
 
@@ -9,7 +10,7 @@ export default function Player(props) {
         <div className="mx-auto right-0 w-60">
             <div className="rounded overflow-hidden">
                 <div className="text-center p-6 border-b">
-                    <img className="w-20 h-20 mx-auto rounded" src={data.image} alt="Large avatar" />
+                    <img className="w-20 h-20 mx-auto rounded" src={data?.image || NoProfileImage.src} alt="Large avatar" />
                     <p className="pt-2 text-lg font-semibold text-gray-50">{data.name} {data.lastname}</p>
                     <p className="text-sm text-gray-100">{data.email}</p>
                     <div className="mt-5">

@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { logout } from '@/api/auth';
 import { getApiPlayer } from '@/api/user';
 import { useUserContext } from '@/hooks/UserContext';
+import NoImageProfile from '../../../public/png/no-profile.png';
 
 
 export default function Nav() {
@@ -51,7 +52,7 @@ export default function Nav() {
                                 <div>
                                     <button onClick={() => setHidden(!hidden)} type="button" className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                                         <span className="sr-only">Open user menu</span>
-                                        <img className="w-8 h-8 rounded-full" src={player?.image} alt='profile photo' />
+                                        <img className="w-8 h-8 rounded-full" src={player?.image || NoImageProfile.src} alt='profile photo' />
                                     </button>
                                 </div>
                                 <div onMouseLeave={() => setHidden(true)} className={hidden ? "hidden" : "z-50 absolute top-0 right-16 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"}>

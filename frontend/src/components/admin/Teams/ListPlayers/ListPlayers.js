@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import NoImageProfile from '../../../../../public/png/no-profile.png';
 
 export default function ListPlayers(props) {
 
@@ -28,7 +29,7 @@ export default function ListPlayers(props) {
                     {teamPlayers.map((player, index) => (
                         <tr key={index} className="border-gray-700 border-b">
                             <th scope="row" className="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white ">
-                            <img className="w-10 h-10 rounded-lg mr-4" src={player.image} alt={index} />
+                            <img className="w-10 h-10 rounded-lg mr-4" src={player?.image || NoImageProfile.src} alt={index} />
                                 {player.name} {player.lastname}
                             </th>
                             <td className="px-6 py-4">

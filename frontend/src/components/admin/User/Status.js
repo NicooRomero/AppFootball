@@ -7,11 +7,13 @@ export default function Status(props) {
     const { data: { status } } = props;
 
     var today = moment(Date.now()).format('YYYY-MM-DD');
-    var dateSeted =  moment(status.toDate).format('YYYY-MM-DD')
+    console.log(today, 'today');
+    var dateSeted =  moment(status.toDate).format('YYYY-MM-DD');
+    console.log(dateSeted, 'seted');
     
     useEffect(() => {
         (async () => {
-            if (dateSeted && dateSeted >= today) {
+            if (dateSeted > today) {
                 console.log('hay fecha = suspendido');
                 toast('You are currently suspended to play!', {
                     icon: '❗',

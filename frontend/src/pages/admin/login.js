@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getAccToken } from '@/api/auth';
-import LoginForm from '../../components/admin/Forms/loginForm/LoginForm';
+import FormLogin from '../../components/admin/Forms/loginForm/FormLogin';
 
 export default function Login() {
 
@@ -25,7 +25,7 @@ export default function Login() {
                 </a>
             </div>
             <div>
-                <LoginForm />
+                <FormLogin />
             </div>
         </div>
     )

@@ -10,7 +10,7 @@ exports.getUsers = async (req, res) => {
         if (req.query) {
             const { limit } = req.query;
 
-            let listPlayers = await Player.find().sort({ date: -1 }).limit(limit).select('-password').populate('team','name');;
+            let listPlayers = await Player.find().sort({ date: -1 }).limit(limit).select('-password').populate('team', 'name');;
 
             if (listPlayers.totalDocs === 0) return res.status(404).send({ message: 'No se han encontrado jugadores.' });
 
@@ -25,7 +25,7 @@ exports.getUsers = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -42,7 +42,7 @@ exports.getUser = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).send({ code: 500, message: "Error en el servidor, intente de nuevo más tarde." });
+        res.status(500).send({ code: 500, message: "Server error, please try again later." });
     }
 }
 
@@ -82,8 +82,39 @@ exports.addUsers = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
+}
+
+exports.addImageProfile = async (req, res) => {
+
+    const params = req.params;
+    const file = req.file;
+
+    try {
+
+        let updatePlayer;
+
+        updatePlayer = await Player.findById(params.id);
+
+        if (!updatePlayer) return res.status(404).send({ message: 'The player does not exist.' });
+
+        if (!file) return res.status(400).send({ message: 'Please you must choose an image file' })
+
+        const fileName = req.file.filename;
+        const folder = updatePlayer.document
+        const basePath = await `${req.protocol}://${req.get('host')}/public/uploads/players/${folder}/`;
+        updatePlayer.image = await `${basePath}${fileName}`;
+
+        await Player.findByIdAndUpdate(params.id, updatePlayer);
+
+        return res.status(200).send({ message: 'Image updated successfully.' });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Server error, please try again later.' });
+    }
+
 }
 
 exports.editUser = async (req, res) => {
@@ -96,7 +127,7 @@ exports.editUser = async (req, res) => {
 
         player = await Player.findById(params.id);
 
-        if(!player) return res.status(404).send({ message: 'El jugador no se encuentra registrado.' });
+        if (!player) return res.status(404).send({ message: 'El jugador no se encuentra registrado.' });
 
         if (file) {
             const fileName = req.file.filename;
@@ -111,12 +142,12 @@ exports.editUser = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
 exports.changePassword = async (req, res) => {
-    
+
     const params = req.params;
     const body = req.body;
 
@@ -124,23 +155,23 @@ exports.changePassword = async (req, res) => {
 
         player = await Player.findById(params.id);
 
-        if(!player) return res.status(404).send({ message: 'El jugador no existe.' });
+        if (!player) return res.status(404).send({ message: 'El jugador no existe.' });
 
-        const { currentPassword, newPassword, reNewPassword} = body;
-        
-        
-        if(!currentPassword || !newPassword || !reNewPassword){ 
+        const { currentPassword, newPassword, reNewPassword } = body;
+
+
+        if (!currentPassword || !newPassword || !reNewPassword) {
             return res.status(400).send({ message: 'Para cambiar la password todos los campos son obligatorios.' });
         } else {
-            if(currentPassword && newPassword === reNewPassword){
+            if (currentPassword && newPassword === reNewPassword) {
 
                 const currentPassOK = await bcryptjs.compare(currentPassword, player.password);
-                
-                if(currentPassOK) {
+
+                if (currentPassOK) {
                     const salt = await bcryptjs.genSalt(10);
                     setNewPassord = await bcryptjs.hash(newPassword, salt);
 
-                    await Player.findByIdAndUpdate(params.id, {password: setNewPassord});
+                    await Player.findByIdAndUpdate(params.id, { password: setNewPassord });
                 } else {
                     return res.status(400).send({ message: 'La contraseña actual es incorrecta.' });
                 }
@@ -149,11 +180,11 @@ exports.changePassword = async (req, res) => {
             }
         }
 
-        return res.status(200).send({ message: 'La contraseña fue cambiada correctamente.' });        
-        
+        return res.status(200).send({ message: 'La contraseña fue cambiada correctamente.' });
+
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -170,7 +201,7 @@ exports.deletePlayer = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -195,20 +226,20 @@ exports.searchUsers = async (req, res) => {
         const filter = {};
         if (nPlayer || lPlayer || tPlayer) {
             filter.$or = [];
-        
+
             if (nPlayer) {
                 filter.$or.push({ name: { $regex: nPlayer, $options: 'i' } });
             }
-        
+
             if (lPlayer) {
                 filter.$or.push({ lastname: { $regex: lPlayer, $options: 'i' } });
             }
-        
+
             if (tPlayer) {
                 filter.$or.push({ team: { $regex: tPlayer, $options: 'i' } });
             }
         }
-        
+
         const players = await Player.find(filter).sort(sortBy);
 
         const total = await Player.countDocuments(filter);
@@ -222,7 +253,7 @@ exports.searchUsers = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -233,17 +264,17 @@ exports.loginUser = async (req, res) => {
 
         let user = await Player.findOne({ email });
 
-        if(!user) return res.status(404).send({ message: 'Error! El usuario no existe.' });
+        if (!user) return res.status(404).send({ message: 'Error! El usuario no existe.' });
 
         const passOk = await bcryptjs.compare(password, user.password);
 
-        if(!passOk) return res.status(400).send({ message: 'La contraseña es incorrecta.' });
+        if (!passOk) return res.status(400).send({ message: 'La contraseña es incorrecta.' });
 
         return res.status(200).send({ accessToken: jwt.accessToken(user), refreshToken: jwt.refreshToken(user) });
-        
+
     } catch (error) {
         console.log(error);
-        return res.status(5000).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(5000).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -280,7 +311,7 @@ exports.setState = async (req, res) => {
             };
             message = 'El jugador fue habilitado.';
         }
-        
+
         const user = await Player.findByIdAndUpdate(id, updateFields, { new: true });
 
         if (!user) {
@@ -290,7 +321,7 @@ exports.setState = async (req, res) => {
         return res.status(200).send({ message });
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 

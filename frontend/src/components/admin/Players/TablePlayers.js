@@ -8,6 +8,7 @@ import ReactPaginate from 'react-paginate';
 import { addPlayerToTeam } from '@/api/teams';
 import UserForm from '../Forms/userForm/UserForm';
 import BasicModal from '@/components/Modal/BasicModal';
+import NoImageProfile from '../../../../public/png/no-profile.png';
 
 export default function TablePlayers(props) {
 
@@ -143,7 +144,7 @@ export default function TablePlayers(props) {
                             return (
                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th onClick={() => handleClick(player)} scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white cursor-pointer">
-                                        <img className="w-10 h-10 rounded-full" src={player.image} alt={index} />
+                                        <img className="w-10 h-10 rounded-full" src={player?.image || NoImageProfile.src} alt={index} />
                                         <div className="pl-3">
                                             <div className="text-base font-semibold">{player.name} {player.lastname}</div>
                                             <div className="font-normal text-gray-500">{player.email}</div>

@@ -1,5 +1,17 @@
 import clientAxios from "@/utils/axios";
 
+// Add player
+export async function addUserApi(data) {
+    const result = await clientAxios.post('/user', data)
+        .then(res => {
+            return res.data;
+        })
+        .catch(err => {
+            return err;
+        })
+    return result;
+}
+
 // Log In user
 export async function LoginApi(data) {
     const result = await clientAxios.post('/user/login', data)
@@ -7,7 +19,7 @@ export async function LoginApi(data) {
             return res
         })
         .catch(err => {
-            return err
+            return err.response.data.message
         })
 
     return result;
@@ -15,7 +27,7 @@ export async function LoginApi(data) {
 
 // Get Players
 export async function getApiPlayers() {
-    const result = clientAxios.get('/user', {
+    const result = await clientAxios.get('/user', {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -32,7 +44,7 @@ export async function getApiPlayers() {
 
 // Get Player
 export async function getApiPlayer(id) {
-    const result = clientAxios.get(`/user/${id}`, {
+    const result = await clientAxios.get(`/user/${id}`, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -49,7 +61,7 @@ export async function getApiPlayer(id) {
 
 // Change Password
 export async function changePassword(idUser, data) {
-    const result = clientAxios.post(`/user/changePw/${idUser}`, data, {
+    const result = await clientAxios.post(`/user/changePw/${idUser}`, data, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -66,7 +78,7 @@ export async function changePassword(idUser, data) {
 
 // Edit Player
 export async function editApiPlayer(id, data) {
-    const result = clientAxios.put(`/user/${id}`, data, {
+    const result = await clientAxios.put(`/user/${id}`, data, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -80,4 +92,21 @@ export async function editApiPlayer(id, data) {
         })
 
     return result;
+}
+
+// Upload Avatar
+export async function uploadAvatarApi(id, formData ) {
+    const result = await clientAxios.put(`/user/upload/avatar/${id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+        .then(res => {
+            return res
+        })
+        .catch(err => {
+            return err
+        })
+
+    return result
 }

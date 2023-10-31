@@ -24,8 +24,7 @@ const userSchema = mongoose.Schema({
     },
     image: {
         type: String,
-        default: '',
-        required: true
+        default: ''
     },
     team: {
         type: mongoose.Schema.Types.ObjectId,

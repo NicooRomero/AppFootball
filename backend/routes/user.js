@@ -20,28 +20,31 @@ const storage = multer.diskStorage({
             uploadError = null
         }
 
-        const playerDoc = `${req.body.document}`;
+        let playerDoc = `${req.body.document}`;
+
         const uploadPath = path.join('public/uploads/players/', playerDoc);
 
         // if user folder already exist, update file
         if (fs.existsSync(uploadPath)) {
 
-        //read old file
-        oldFile = fs.readdirSync(uploadPath);
-            
-        //delete old file
-        fs.unlinkSync(`${uploadPath}/${oldFile}`);
+            //read old file
+            oldFile = fs.readdirSync(uploadPath);
 
-        //upload new file
-        cb(uploadError, uploadPath)
+            //delete old file
+            fs.unlinkSync(`${uploadPath}/${oldFile}`);
+
+            //upload new file
+            cb(uploadError, uploadPath)
 
         } else { //if user folder doesn't exist
 
-        //make new user folder
-        fs.mkdirSync(uploadPath)
+            if (file) {
+                //make new user folder
+                fs.mkdirSync(uploadPath)
 
-        //upload new file
-        cb(uploadError, uploadPath)
+                //upload new file
+                cb(uploadError, uploadPath)
+            }
         }
 
     },
@@ -61,6 +64,7 @@ router.get('/:id', userController.getUser);
 router.post('/', upload.single('image'), userController.addUsers);
 router.post('/login', userController.loginUser);
 router.post('/changePw/:id', userController.changePassword);
+router.put('/upload/avatar/:id', upload.single('image'), userController.addImageProfile);
 router.put('/:id', upload.single('image'), userController.editUser);
 router.put('/set-state/:id', userController.setState);
 router.delete('/:id', userController.deletePlayer);
