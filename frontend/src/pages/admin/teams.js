@@ -6,17 +6,19 @@ import { getApiTeams } from '@/api/teams';
 export default function teams() {
 
     const [teams, setTeams] = useState([]);
+    const [reloadTeams, setReloadTeams] = useState(false);
 
     useEffect(() => {
         (async () => {
             const response = await getApiTeams()
             setTeams(response)
+            setReloadTeams(false);
         })();
-    }, []);
+    }, [reloadTeams]);
 
     return (
         <AdminLayout>
-            <TableTeams teams={teams} />
+            <TableTeams teams={teams} setReloadTeams={setReloadTeams} />
         </AdminLayout>
     )
 }

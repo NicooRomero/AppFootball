@@ -108,5 +108,37 @@ export async function uploadAvatarApi(id, formData ) {
             return err
         })
 
-    return result
+    return result;
+}
+
+// Set status
+export async function setStatusApi(id, data) {
+    const result = await clientAxios.put(`/user/status/${id}`, data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            return err;
+        })
+    return result;
+}
+
+// Delete player
+export async function deleteApiPlayer(id) {
+    const result = await clientAxios.delete(`/user/${id}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            return err;
+        })
+    return result;
 }

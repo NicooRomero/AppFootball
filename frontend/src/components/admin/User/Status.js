@@ -1,29 +1,48 @@
 import React, { useEffect, useState } from 'react';
+import { setStatusApi } from '@/api/user';
 import toast from 'react-hot-toast';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 
 export default function Status(props) {
 
-    const { data: { status } } = props;
+    const { data: { status }, setReloadUser } = props;
+    const router = useRouter();
+    const { query } = router;
 
     var today = moment(Date.now()).format('YYYY-MM-DD');
-    console.log(today, 'today');
-    var dateSeted =  moment(status.toDate).format('YYYY-MM-DD');
-    console.log(dateSeted, 'seted');
+    var dateSeted = status.toDate != null ? moment(status.toDate).format('YYYY-MM-DD') : null; //'2023-10-31T22:31:37-03:00'
     
     useEffect(() => {
         (async () => {
-            if (dateSeted > today) {
-                console.log('hay fecha = suspendido');
-                toast('You are currently suspended to play!', {
-                    icon: '❗',
-                });
+            if (dateSeted && dateSeted > today) {
+                    toast.error('You are currently suspended to play!', {
+                        icon: '❗',
+                    });
+                    setReloadUser(true)     
             } else {
-                console.log('habilitar jugador');
+                if(status.enabled === false) {
+                    const idUser = query.user;
+                    const data = {
+                        newState: true,
+                        newDate: null
+                    }          
+                    const result = await setStatusApi(idUser, data)
+                        if(result.status === 200) {
+                            toast.success(result.data.message, {
+                                icon: '✅',
+                            });
+                        } else {
+                            toast.error(result.data.message, {
+                                icon: '❗',
+                            }); 
+                        }              
+                }
+                setReloadUser(true);
             }
         })();
     }, []);
-
+     
     return (
         <div className="flex flex-col h-full rounded-lg shadow-md border-gray-700 bg-gray-900">
             <div className="flex flex-col justify-between p-4 leading-normal">

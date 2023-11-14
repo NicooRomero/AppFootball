@@ -190,13 +190,13 @@ exports.changePassword = async (req, res) => {
 
 exports.deletePlayer = async (req, res) => {
     const params = req.params;
-
+    
     try {
 
-        let player = await Player.findByIdAndRemove(params.id);
+        let player = await Player.findByIdAndDelete(params.id);
 
         if (!player) return res.status(400).send({ message: 'Jugador no encontrado.' });
-
+        
         return res.status(200).send({ message: 'El jugador fue eliminado.' });
 
     } catch (error) {
@@ -297,9 +297,9 @@ exports.setState = async (req, res) => {
                         toDate: selectedDate
                     }
                 };
-                message = `El jugador fue deshabilitado hasta ${moment(selectedDate).format('LL')}`;
+                message = `The player was disabled until ${moment(selectedDate).format('LL')}`;
             } else {
-                return res.status(404).send({ message: 'La fecha seleccionada no puede ser menor a la fecha actual.' });
+                return res.status(404).send({ message: 'The selected date cannot be less than the current date.' });
             }
 
         } else if (newState == true && !newDate) {
@@ -309,13 +309,13 @@ exports.setState = async (req, res) => {
                     toDate: null
                 }
             };
-            message = 'El jugador fue habilitado.';
+            message = 'The player was enabled.';
         }
 
         const user = await Player.findByIdAndUpdate(id, updateFields, { new: true });
 
         if (!user) {
-            return res.status(404).send({ message: 'Usuario no encontrado.' });
+            return res.status(404).send({ message: 'User not found.' });
         }
 
         return res.status(200).send({ message });

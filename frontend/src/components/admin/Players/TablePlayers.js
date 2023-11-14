@@ -6,6 +6,7 @@ import Player from './Player/Player';
 import useAuth from '@/hooks/useAuth';
 import ReactPaginate from 'react-paginate';
 import { addPlayerToTeam } from '@/api/teams';
+import { deleteApiPlayer } from '@/api/user';
 import UserForm from '../Forms/userForm/UserForm';
 import BasicModal from '@/components/Modal/BasicModal';
 import NoImageProfile from '../../../../public/png/no-profile.png';
@@ -13,7 +14,7 @@ import NoImageProfile from '../../../../public/png/no-profile.png';
 export default function TablePlayers(props) {
 
     const { user } = useAuth();
-    
+
     const { players, setReloadUser } = props;
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState('');
@@ -39,16 +40,11 @@ export default function TablePlayers(props) {
         setShowComponent(<Player data={player} />);
     }
 
-    const editPlayer = (player) => {
-        setShowModal(true);
-        setTitle('Edit player');
-        setShowComponent(<UserForm data={player} setReloadUser={setReloadUser} setShowModal={setShowModal} />);
-    }
 
     const addPlayer = async (playerID) => {
 
         const tLeaderID = user.id;
-        const data = {playerID, tLeaderID}
+        const data = { playerID, tLeaderID }
 
         if (user.teamLeader) {
             Swal.fire({
@@ -61,9 +57,9 @@ export default function TablePlayers(props) {
                 confirmButtonText: 'Yes, add to my team!'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    
+
                     const response = await addPlayerToTeam(data)
-                    if(response.status === 200) {
+                    if (response.status === 200) {
                         Swal.fire(
                             'Request sent!',
                             'The request to join your team has been sent.',
@@ -71,13 +67,55 @@ export default function TablePlayers(props) {
                         );
                     } else {
                         toast.error(response.response.data.message);
-                    }                    
+                    }
                 }
             });
         } else {
             toast.error('Only team leaders can be add players.');
         }
     };
+
+    const editPlayer = (player) => {
+        if (user.isAdmin) {
+            setShowModal(true);
+            setTitle('Edit player');
+            setShowComponent(<UserForm data={player} setReloadUser={setReloadUser} setShowModal={setShowModal} />);
+        } else {
+            toast.error('Only admins can be edit players.');
+        }
+    }
+
+    const deletePlayer = (playerID) => {
+
+        if (user.isAdmin) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to delete this player?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete player!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+
+                    const response = await deleteApiPlayer(playerID)
+                    if (response.status === 200) {
+                        Swal.fire(
+                            'Removed!',
+                            'The player has been successfully deleted.',
+                            'success'
+                        );
+                    } else {
+                        toast.error(response.response.data.message);
+                    }
+                    setReloadUser(true);
+                }
+            });
+        } else {
+            toast.error('Only admins can be delete players.');
+        }
+    }
 
     const handleChange = e => {
         setSearch(e.target.value);
@@ -87,6 +125,8 @@ export default function TablePlayers(props) {
     const filter = (searchTerm) => {
         let resultSearch = tablePlayers.filter((element) => {
             if (element.name.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                element.lastname.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                element.team?.name.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
                 element.position.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
                 element.birthday.includes(searchTerm.toLowerCase())
             ) {
@@ -183,7 +223,7 @@ export default function TablePlayers(props) {
                                                     <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z" />
                                                 </svg>
                                             </button>
-                                            <button type="button" onClick={() => console.log(`borrar jugador ${player._id}`)} className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full  text-sm px-4 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                            <button type="button" onClick={() => deletePlayer(player._id)} className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full  text-sm px-4 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
                                                 <svg className="w-[15px] h-[15px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                                                     <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z" />
                                                 </svg>

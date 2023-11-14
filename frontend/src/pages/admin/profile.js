@@ -61,7 +61,7 @@ export default function profile() {
                             <Password idUser={idUser} />
                         </div>
                         <div className="">
-                            <Status data={data} />
+                            <Status data={data} setReloadUser={setReloadUser} />
                         </div>
                     </div>
                 </>

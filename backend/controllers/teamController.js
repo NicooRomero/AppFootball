@@ -33,33 +33,37 @@ exports.getTeam = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).send({ code: 500, message: "Error en el servidor, intente de nuevo más tarde." });
+        res.status(500).send({ code: 500, message: "Server error, please try again later." });
     }
 }
 
 exports.addTeam = async (req, res) => {
 
     const teamData = req.body;
-    const file = req.file;
-
-    if (!teamData.name) return res.status(400).send({ message: 'Error! El nombre del equipo es obligatorio.' });
-
+    
     try {
+
+        if (!teamData.name) return res.status(400).send({ message: 'Error! Team name is required.' });
+
+        const newTeam = {
+            'name': teamData.name,
+            'teamLeader': teamData.teamLeader,
+            'social.instagram': teamData.instagram,
+            'social.facebook': teamData.facebook,
+            'social.twitter': teamData.twitter
+        }   
 
         const player = await Player.findById(teamData.teamLeader);
 
-        if (!player.teamLeader) return res.status(401).send({ message: 'Usuario no autorizado para crear un equipo.' });
+        if (player.team) return res.status(403).send({ message: 'Only one team can be created per user.' });
 
-        if (player.team) return res.status(403).send({ message: 'Solo se puede crear un equipo por usuario.' });
+        team = new Team(newTeam);
 
-        team = new Team(teamData)
+        let arrayPlayers = team.players;  
 
-        if (file) {
-            const fileName = req.file.filename;
-            const folder = teamData.teamLeader
-            const basePath = await `${req.protocol}://${req.get('host')}/public/uploads/teams/${folder}/`;
-            team.image = await `${basePath}${fileName}`;
-        }
+        arrayPlayers.push(player);
+
+        team.players = await arrayPlayers;
 
         await team.save();
 
@@ -69,11 +73,11 @@ exports.addTeam = async (req, res) => {
 
         await Player.findByIdAndUpdate(player.id, playerData);
 
-        return res.status(200).send({ message: 'Equipo creado correctamente.' });
+        return res.status(200).send({ message: 'Successfully created team.' });
 
     } catch (error) {
         console.log(error)
-        return res.status(500).send({ code: 500, message: "Error en el servidor, intente de nuevo más tarde." });
+        return res.status(500).send({ code: 500, message: "Server error, please try again later." });
     }
 }
 
@@ -118,7 +122,7 @@ exports.addPlayerTeam = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ code: 500, message: "Error en el servidor, intente de nuevo más tarde." });
+        return res.status(500).send({ code: 500, message: "Server error, please try again later." });
     }
 
 }
@@ -161,7 +165,7 @@ exports.acceptJoinTeam = async (req, res) => {
         
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 
 }
@@ -169,32 +173,42 @@ exports.acceptJoinTeam = async (req, res) => {
 exports.updateTeam = async (req, res) => {
 
     const teamData = req.body;
-    const file = req.file;
     const params = req.params;
 
     try {
 
+        let updateData = {
+            'name': teamData.name,
+            'social.instagram': teamData.instagram,
+            'social.facebook': teamData.facebook,
+            'social.twitter': teamData.twitter
+        }
+
         team = await Team.findById(params.id)
 
-        if (!team) return res.status(404).send({ message: 'Error! El equipo no existe.' });
+        if (!team) return res.status(404).send({ message: 'Error! team does not exist.' });
+        
+        let teamUpdate = await Team.findByIdAndUpdate(params.id, updateData);
 
-        if (file) {
-            const fileName = req.file.filename;
-            const folder = team.teamLeader
-            const basePath = await `${req.protocol}://${req.get('host')}/public/uploads/teams/${folder}/`;
-            teamData.image = await `${basePath}${fileName}`;
-        }
-        console.log(teamData)
-        let teamUpdate = await Team.findByIdAndUpdate(params.id, teamData);
+        if (!teamUpdate) return res.status(400).send({ message: 'Error updating team data.' });
 
-        if (!teamUpdate) return res.status(400).send({ message: 'Error al actualizar datos del equipo.' });
-
-        return res.status(200).send({ message: 'Datos del equipo actualizados correctamente.' });
+        return res.status(200).send({ message: 'Team data updated correctly.' });
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
+}
+
+exports.updateTeamAvatar = async (req, res) => {
+
+    if (file) {
+        const fileName = req.file.filename;
+        const folder = team.teamLeader
+        const basePath = await `${req.protocol}://${req.get('host')}/public/uploads/teams/${folder}/`;
+        teamData.image = await `${basePath}${fileName}`;
+    }
+
 }
 
 exports.removePlayerTeam = async (req, res) => {
@@ -227,7 +241,7 @@ exports.removePlayerTeam = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
 
@@ -244,6 +258,6 @@ exports.deleteTeam = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).send({ message: 'Error en el servidor, intente de nuevo más tarde.' });
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }

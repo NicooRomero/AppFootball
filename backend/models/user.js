@@ -81,7 +81,8 @@ const userSchema = mongoose.Schema({
             default: true
         },
         toDate: {
-            type: Date
+            type: Date,
+            default: null
         }
     },
     dateCreated: {

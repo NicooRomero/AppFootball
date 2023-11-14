@@ -3,7 +3,6 @@ import * as Yup from 'yup';
 import moment from 'moment';
 import { useFormik } from 'formik';
 import toast, { Toaster } from 'react-hot-toast';
-//import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { editApiPlayer, addUserApi } from '@/api/user';
 

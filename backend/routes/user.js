@@ -66,7 +66,7 @@ router.post('/login', userController.loginUser);
 router.post('/changePw/:id', userController.changePassword);
 router.put('/upload/avatar/:id', upload.single('image'), userController.addImageProfile);
 router.put('/:id', upload.single('image'), userController.editUser);
-router.put('/set-state/:id', userController.setState);
+router.put('/status/:id', userController.setState);
 router.delete('/:id', userController.deletePlayer);
 
 module.exports = router;

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 export default function ImageForm(props) {
 
-    const { document, setReloadUser, setShowModal } = props;
+    const { document, team, setReloadUser, setShowModal } = props;
     const [newImage, setNewImage] = useState(null);
     const [file, setFile] = useState(null);
     
@@ -38,18 +38,23 @@ export default function ImageForm(props) {
     };
 
     const onSubmit = async () => {
-        const formData = new FormData();
-        formData.append('document', document);
-        formData.append('image', file);
+        if(team) {
+            console.log('camabiar imagen equipo', team, file);
+        } else {
+            const formData = new FormData();
+            formData.append('document', document);
+            formData.append('image', file);
+    
+            const result = await uploadAvatarApi(query.user, formData)
+                if(result.status === 200) {
+                    toast.success(result.data.message)
+                } else {
+                    toast.error('An error occurred while trying to upload the image.')
+                }
+            setReloadUser(true);
+            setShowModal(false);
+        }
 
-        const result = await uploadAvatarApi(query.user, formData)
-            if(result.status === 200) {
-                toast.success(result.data.message)
-            } else {
-                toast.error('An error occurred while trying to upload the image.')
-            }
-        setReloadUser(true);
-        setShowModal(false);
     }
 
 
@@ -58,7 +63,7 @@ export default function ImageForm(props) {
         <div className="flex items-center justify-center w-full flex-col">
             <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 transition-all duration-300 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
             >
                 <div className="flex flex-col items-center justify-center p-6">
                     {newImage ? newImage && <img src={newImage} className='mb-6' alt="Preview" style={{ maxWidth: '50%', maxHeight: '200px' }} />
@@ -90,7 +95,7 @@ export default function ImageForm(props) {
             </label>
             {
                 newImage ?
-                    <button onClick={() => onSubmit()} className="items-center px-4 py-2 text-sm font-medium mt-2 w-full text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <button onClick={() => onSubmit()} className="items-center px-4 py-2 text-sm font-medium mt-2 w-full text-center text-white bg-blue-700 rounded-lg transition-all duration-300 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Upload image
                     </button>
                     : null

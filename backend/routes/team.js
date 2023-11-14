@@ -57,10 +57,10 @@ const upload = multer({ storage: storage });
 
 router.get('/', teamController.getTeams);
 router.get('/:id', teamController.getTeam);
-router.post('/', upload.single('image'), teamController.addTeam);
+router.post('/', teamController.addTeam);
 router.post('/send-request', teamController.addPlayerTeam);
 router.post('/accept-request', teamController.acceptJoinTeam);
-router.put('/:id', upload.single('image'), teamController.updateTeam);
+router.put('/:id', teamController.updateTeam);
 router.patch('/:id', teamController.removePlayerTeam);
 router.delete('/:id', teamController.deleteTeam);
 

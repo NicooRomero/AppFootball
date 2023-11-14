@@ -8,7 +8,7 @@ export function getAccToken() {
 
     if(accessToken) {
         const expired = willExpireToken(accessToken);
-        console.log(expired);
+        
         if(!expired) {
             return accessToken;
         }
@@ -27,7 +27,7 @@ export function getRefToken() {
     
     if(refreshToken) {
         const expired = willExpireToken(refreshToken);
-        console.log(expired);
+        
         if(!expired) {
             return refreshToken;
         }
