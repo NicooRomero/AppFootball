@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { uploadTeamImgApi } from '@/api/teams';
 import { uploadAvatarApi } from '@/api/user';
 import toast from 'react-hot-toast';
 
 export default function ImageForm(props) {
 
-    const { document, team, setReloadUser, setShowModal } = props;
+    const { document, team, setReloadUser, setReloadTeams, setShowModal } = props;
     const [newImage, setNewImage] = useState(null);
     const [file, setFile] = useState(null);
     
@@ -39,7 +40,17 @@ export default function ImageForm(props) {
 
     const onSubmit = async () => {
         if(team) {
-            console.log('camabiar imagen equipo', team, file);
+            const formData = new FormData();
+            formData.append('image', file);
+    
+            const result = await uploadTeamImgApi(team, formData)
+                if(result.status === 200) {
+                    toast.success(result.data.message);
+                    setReloadTeams(true);
+                    setShowModal(false);
+                } else {
+                    toast.error('An error occurred while trying to upload the image.')
+                }
         } else {
             const formData = new FormData();
             formData.append('document', document);
@@ -48,11 +59,11 @@ export default function ImageForm(props) {
             const result = await uploadAvatarApi(query.user, formData)
                 if(result.status === 200) {
                     toast.success(result.data.message)
+                    setReloadUser(true);
+                    setShowModal(false);
                 } else {
                     toast.error('An error occurred while trying to upload the image.')
                 }
-            setReloadUser(true);
-            setShowModal(false);
         }
 
     }
@@ -95,7 +106,7 @@ export default function ImageForm(props) {
             </label>
             {
                 newImage ?
-                    <button onClick={() => onSubmit()} className="items-center px-4 py-2 text-sm font-medium mt-2 w-full text-center text-white bg-blue-700 rounded-lg transition-all duration-300 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <button onClick={() => onSubmit()} type='button' className="items-center px-4 py-2 text-sm font-medium mt-2 w-full text-center text-white bg-blue-700 rounded-lg transition-all duration-300 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Upload image
                     </button>
                     : null

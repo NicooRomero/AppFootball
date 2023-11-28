@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import moment from "moment/moment";
+import Swal from 'sweetalert2';
 import ReactPaginate from "react-paginate";
 import useAuth from "@/hooks/useAuth";
 import ListPlayers from "../ListPlayers/ListPlayers";
 import TeamForm from "../../Forms/teamForm/TeamForm";
 import BasicModal from "@/components/Modal/BasicModal";
-import NoTeamImg from '../../../../../public/png/no-team.png';
+import toast, { Toaster } from "react-hot-toast";
+import { deleteApiTeam } from "@/api/teams";
+import NoTeamImg from "../../../../../public/png/no-team.png";
 
 export default function TableTeams(props) {
   const { teams, setReloadTeams } = props;
   const { user } = useAuth();
-
+  
   const [showModal, setShowModal] = useState(false);
   const [component, setComponent] = useState();
   const [title, setTitle] = useState("");
@@ -29,10 +32,11 @@ export default function TableTeams(props) {
     setItemOffset(newOffset);
   };
 
-  const handleClick = (players) => {
+  const handleClick = (players, team) => {
+    const teamLeader = team.teamLeader[0]._id;
     setTitle("Team players");
     setShowModal(true);
-    setComponent(<ListPlayers teamPlayers={players} />);
+    setComponent(<ListPlayers teamPlayers={players} teamLeader={teamLeader} setReloadTeams={setReloadTeams} setShowModal={setShowModal} />);
   };
 
   const handleChange = (e) => {
@@ -55,10 +59,7 @@ export default function TableTeams(props) {
     setTitle("Add new team");
     setShowModal(true);
     setComponent(
-      <TeamForm
-        setShowModal={setShowModal}
-        setReloadTeams={setReloadTeams}
-      />
+      <TeamForm setShowModal={setShowModal} setReloadTeams={setReloadTeams} />
     );
   };
 
@@ -74,8 +75,37 @@ export default function TableTeams(props) {
     );
   };
 
-  const deleteTeam = (id) => {
-    console.log("delete", id);
+  const deleteTeam = (team) => {  
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to delete this team?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete team!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+
+                const admin = user.isAdmin;
+                const userId = user.id;
+                const leaderId = team.teamLeader[0]._id;
+                const teamId = team._id;
+
+                if(admin || userId === leaderId) {
+                    const response = await deleteApiTeam(teamId, userId)
+                    if (response.status === 200) {
+                        toast.success(response.data.message);
+                    } else {
+                        toast.error(response.data.message);
+                    }
+                    setReloadTeams(true);
+                } else {
+                    toast.error('Only player owner or admins can be delete team/s.');
+                }
+                
+            }
+        }); 
   };
 
   return (
@@ -160,11 +190,9 @@ export default function TableTeams(props) {
               <th scope="col" className="px-6 py-3">
                 Score
               </th>
-              {user.isAdmin || user.isTeamLeader ? (
-                <th scope="col" className="px-6 py-3">
-                  Actions
-                </th>
-              ) : null}
+              <th scope="col" className="px-6 py-3">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -204,7 +232,7 @@ export default function TableTeams(props) {
                     </div>
                   ))}
                   <div
-                    onClick={() => handleClick(team.players)}
+                    onClick={() => handleClick(team.players, team)}
                     className="flex items-center justify-center w-10 h-10 text-xs font-medium text-white bg-gray-700 border-2 border-white rounded-full hover:bg-gray-600 dark:border-gray-800 cursor-pointer"
                   >
                     +
@@ -227,7 +255,7 @@ export default function TableTeams(props) {
                     {team.lose}
                   </span>
                 </td>
-                {user.isAdmin || user.isTeamLeader ? (
+                {user.isAdmin ? ( // if admin can edit/delete any team
                   <td className="px-6 py-4">
                     <button
                       type="button"
@@ -246,7 +274,7 @@ export default function TableTeams(props) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => deleteTeam(team._id)}
+                      onClick={() => deleteTeam(team)}
                       className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                     >
                       <svg
@@ -260,7 +288,40 @@ export default function TableTeams(props) {
                       </svg>
                     </button>
                   </td>
-                ) : null}
+                ) : user.id === team.teamLeader[0]._id ? ( // only can edit/delete your own team
+                  <td className="px-6 py-4">
+                    <button
+                      type="button"
+                      onClick={() => editTeam(team)}
+                      className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    >
+                      <svg
+                        className="w-[15px] h-[15px] text-gray-800 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteTeam(team)}
+                      className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                    >
+                      <svg
+                        className="w-[15px] h-[15px] text-gray-800 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 18 20"
+                      >
+                        <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z" />
+                      </svg>
+                    </button>
+                  </td>
+                ) : <td className="px-6 py-4"></td>}
               </tr>
             ))}
           </tbody>

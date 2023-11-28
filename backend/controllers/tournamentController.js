@@ -7,18 +7,15 @@ const _ = require('lodash');
 
 exports.getTournaments = async (req, res) => {
 
-    let listTournaments = await Tournament.find().populate('organizer', 'email');
+    let listTournaments = await Tournament.find()
 
-    if (!listTournaments) return res.status(404).send({ message: 'No hay torneos creados.' });
+    if (listTournaments.totalDocs === 0) {
+        return res.status(200).send( listTournaments.totalDocs );
+    } else {
+        return res.status(200).send({ listTournaments });
 
-    const total = await Tournament.countDocuments();
-
-    const response = {
-        total,
-        listTournaments
     }
 
-    return res.status(200).send({ response });
 }
 
 exports.getFixture = async (req, res) => {
@@ -42,7 +39,7 @@ exports.addTournament = async (req, res) => {
 
         const player = await Player.findById(tournamentData.organizer);
 
-        if (!player.organizer) return res.status(401).send({ message: 'Error, usted no esta autorizado para crear un nuevo torneo.' });
+        if (!player.organizer) return res.status(401).send({ message: 'Error, you are not authorized to create a new tournament.' });
 
         const tournament = await new Tournament(tournamentData);
 
@@ -59,11 +56,11 @@ exports.addTournament = async (req, res) => {
 
         tournament.save();
 
-        return res.status(200).send({ message: 'El torneo fue creado con éxito.' });
+        return res.status(200).send({ message: 'Tournament was created successfully.' });
 
     } catch (error) {
         console.log(error)
-        res.status(500).send({ code: 500, message: "Error en el servidor, intente de nuevo más tarde." });
+        res.status(500).send({ code: 500, message: "Server error, please try again later." });
     }
 
 }

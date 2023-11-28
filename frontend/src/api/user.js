@@ -142,3 +142,19 @@ export async function deleteApiPlayer(id) {
         })
     return result;
 }
+
+// Leave team
+export async function leaveTeamApi(id) {
+    const result = await clientAxios.patch(`/user/leave-team/${id}`, {
+        header: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            return err;
+        })
+    return result;
+}

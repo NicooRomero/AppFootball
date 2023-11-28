@@ -25,15 +25,27 @@ exports.deleteInvitation = async (req, res) => {
     
     try {
         
-        let deleteInvitation = await Invitation.findByIdAndDelete(id);
-        let deleteRequest = await Requests.findByIdAndDelete(id);
+        let invitation = await Invitation.findById(id).populate('sender').populate('recipient');
+
+        if(invitation) {
+
+            let requestExists = await Requests.findOne({sender: invitation.sender.id, receiver: invitation.recipient.id});
+
+            if(requestExists) { // if it exists, change the status of the sending user and delete the invitation. if not, just delete invitation.
+                await Requests.findOneAndUpdate({sender: invitation.sender.id, receiver: invitation.recipient.id}, {status: 'rejected'});
+            }
+            
+            let deleteInvitation = await Invitation.findByIdAndDelete(invitation.id);
         
-        if(!deleteInvitation && !deleteRequest) return res.status(400).send({ message: 'this invitation does not exist' });
+            if(!deleteInvitation) return res.status(400).send({ message: 'this invitation does not exist' });
 
-        if(deleteInvitation) {
-            await Request.findOneAndUpdate({sender: tLeaderID, receiver: playerID}, {status: 'rejected'});
+        } else {
+            
+            let deleteRequest = await Requests.findByIdAndDelete(id);
+
+            if(!deleteRequest) return res.status(400).send({ message: 'this request does not exist' });
         }
-
+        
         return res.status(200).send({ message: 'Notification succesfully deleted.' });
         
     } catch (error) {

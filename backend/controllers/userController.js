@@ -1,4 +1,5 @@
 const Player = require('../models/user');
+const Team = require('../models/team');
 const bcryptjs = require('bcryptjs');
 const jwt = require('../services/jwt');
 const moment = require('moment');
@@ -319,6 +320,37 @@ exports.setState = async (req, res) => {
         }
 
         return res.status(200).send({ message });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Server error, please try again later.' });
+    }
+}
+
+exports.leaveTeam = async (req, res) => {
+    
+    const { id } = req.params;
+
+    try {
+
+        const player = await Player.findById(id);
+        const team = await Team.findById(player.team).populate('players');
+
+        let tUpdate = team.players;
+
+        const index = tUpdate.findIndex(item => item.id === player.id);
+        
+        if (index === -1) { //si el id no existe en el arreglo index = -1
+            return res.status(409).send({ message: 'The player trying to remove does not belong to the team.' });
+        } else {
+            const removePlayer = { $pull: { players: player.id } };
+
+            await Team.updateOne({ _id: team.id }, removePlayer);
+
+            await Player.updateOne({ _id: player.id }, { $unset: { team: '' } });
+
+            return res.status(200).send({ message: 'The player was removed from the team.' });
+        }
+        
     } catch (error) {
         console.log(error);
         return res.status(500).send({ message: 'Server error, please try again later.' });

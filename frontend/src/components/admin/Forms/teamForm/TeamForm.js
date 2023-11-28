@@ -39,7 +39,6 @@ export default function TeamForm(props) {
         }
       } else {
         const result = await addNewTeam(formData);
-        console.log(result);
         if (result?.status === 200) {
           setReloadTeams(true);
           toast.success(result.data.message);
@@ -194,7 +193,7 @@ export default function TeamForm(props) {
               </svg>
               Go back
             </button>
-            <ImageForm team={team._id} />
+            <ImageForm team={team._id} setReloadTeams={setReloadTeams} setShowModal={setShowModal} />
           </div>
         )}
       </form>

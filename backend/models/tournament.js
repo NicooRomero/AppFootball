@@ -5,13 +5,13 @@ const tournamentSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    description: {
+    season: {
         type: String,
         required: true
     },
-    address: {
-        type: String,
-        required: true
+    lastChampion: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Team'
     },
     teams: [{
         type: mongoose.Schema.Types.ObjectId,

@@ -8,7 +8,8 @@ const fs = require("fs");
 const FILE_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',
-    'image/jpg': 'jpg'
+    'image/jpg': 'jpg',
+    'image/webp': 'webp'
 }
 
 const storage = multer.diskStorage({
@@ -67,6 +68,7 @@ router.post('/changePw/:id', userController.changePassword);
 router.put('/upload/avatar/:id', upload.single('image'), userController.addImageProfile);
 router.put('/:id', upload.single('image'), userController.editUser);
 router.put('/status/:id', userController.setState);
+router.patch('/leave-team/:id', userController.leaveTeam);
 router.delete('/:id', userController.deletePlayer);
 
 module.exports = router;

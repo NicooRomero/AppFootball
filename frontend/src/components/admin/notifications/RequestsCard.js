@@ -10,34 +10,34 @@ export default function RequestsCard(props) {
 
     const requests = notifications?.listRequests;
 
-    const deleteNotificacion = (request) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to accept this invitation?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, accept invitation!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const response = await deleteApiNotification(request)
-                console.log(response);
-                if (response.status === 200) {
-                    Swal.fire(
-                        'Accepted!',
-                        `Now you are part of the team ${invitation.team.name}.`,
-                        'success'
-                    );
-                } else {
-                    response.response ? toast.error(response.response.data.message)
-                        : toast.error('User canceled the operation.');
-                }
-                setReload(true);
-            }
-        })
-        setReload(false);
-    }
+    // const deleteNotificacion = (request) => {
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "Do you want to accept this invitation?",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, accept invitation!'
+    //     }).then(async (result) => {
+    //         if (result.isConfirmed) {
+    //             const response = await deleteApiNotification(request)
+    //             console.log(response);
+    //             if (response.status === 200) {
+    //                 Swal.fire(
+    //                     'Accepted!',
+    //                     `Now you are part of the team ${invitation.team.name}.`,
+    //                     'success'
+    //                 );
+    //             } else {
+    //                 response.response ? toast.error(response.response.data.message)
+    //                     : toast.error('User canceled the operation.');
+    //             }
+    //             setReload(true);
+    //         }
+    //     })
+    //     setReload(false);
+    // }
 
     if (requests) {
         return (
@@ -58,7 +58,7 @@ export default function RequestsCard(props) {
                                     </div>
                                 </figcaption>
                             </div>
-                            <button onClick={() => onDecline(request._id)} className="bg-red-100 float-right mt-1 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Dismiss</button>
+                            <button onClick={() => onDecline(request._id, true)} className="bg-red-100 float-right mt-1 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Dismiss</button>
                         </li>
                     )
                 })}

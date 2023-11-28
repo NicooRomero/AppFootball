@@ -69,7 +69,8 @@ exports.addTeam = async (req, res) => {
 
         const playerData = player;
 
-        playerData.team = team.id
+        playerData.team = team.id;
+        playerData.teamLeader = true;
 
         await Player.findByIdAndUpdate(player.id, playerData);
 
@@ -200,21 +201,40 @@ exports.updateTeam = async (req, res) => {
     }
 }
 
-exports.updateTeamAvatar = async (req, res) => {
+exports.uploadTeamImg = async (req, res) => {
+    
+    const params = req.params;
+    const file = req.file;
 
-    if (file) {
+    try {
+        let updateTeam;
+
+        updateTeam = await Team.findById(params.id);
+
+        if (!updateTeam) return res.status(404).send({ message: 'Team does not exist.' });
+
+        if (!file) return res.status(400).send({ message: 'Please you must choose an image file' })
+
         const fileName = req.file.filename;
-        const folder = team.teamLeader
+        const folder = updateTeam.id
         const basePath = await `${req.protocol}://${req.get('host')}/public/uploads/teams/${folder}/`;
-        teamData.image = await `${basePath}${fileName}`;
+        updateTeam.image = await `${basePath}${fileName}`;
+
+        await Team.findByIdAndUpdate(params.id, updateTeam);
+
+        return res.status(200).send({ message: 'Image updated successfully.' });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 
 }
 
 exports.removePlayerTeam = async (req, res) => {
-
-    const tLeader = req.body.teamLeader;
-    const player = req.body.player;
+    
+    const tLeader = req.query.tLeaderId;
+    const player = req.params.id;
 
     try {
 
@@ -228,7 +248,7 @@ exports.removePlayerTeam = async (req, res) => {
 
         const index = pUpdate.findIndex(item => item.id === player);
         if (index === -1) { //si el id no existe en el arreglo index = -1
-            return res.status(409).send({ message: 'El jugador que intenta remover, no pertenece al equipo.' });
+            return res.status(409).send({ message: 'The player trying to remove does not belong to the team.' });
         } else {
             const removePlayer = { $pull: { players: playerID._id } };
 
@@ -236,7 +256,7 @@ exports.removePlayerTeam = async (req, res) => {
 
             await Player.updateOne({ _id: playerID._id }, { $unset: { team: '' } });
 
-            return res.status(200).send({ message: 'El jugador fue removido del equipo.' });
+            return res.status(200).send({ message: 'The player was removed from the team.' });
         }
 
     } catch (error) {
@@ -246,18 +266,87 @@ exports.removePlayerTeam = async (req, res) => {
 }
 
 exports.deleteTeam = async (req, res) => {
-    const params = req.params;
 
     try {
 
-        let team = Team.findByIdAndRemove(params.id);
+        const userId = req.query.userId;
+        const teamId = req.params.id;
 
-        if (!team) return res.status(400).send({ message: 'El equipo que desea eliminar no existe.' });
+        const user = await Player.findById(userId).select('isAdmin');
+        const admin = user.isAdmin;
+        const teamDelete = await Team.findById(teamId);
 
-        return res.status(200).send({ message: 'El equipo fue eliminado correctamente.' });
+        if (!teamDelete) return res.status(404).send({ message: 'Team not found.' });
+
+        // Check if the user making the request is the team leader.
+        if (teamDelete.teamLeader.includes(userId) || admin) {
+            
+            for (const playerId of teamDelete.players) {
+                let removeTeamPlayer = await Player.findById(playerId);
+                if (removeTeamPlayer) {
+                    await removeTeamPlayer.updateOne({ $unset: { team: 1 }, teamLeader: false });
+                }
+            }
+
+            // Delete team after update players team
+            await Team.findByIdAndRemove(teamId);
+            
+        } else {
+            return res.status(403).send({ message: 'You do not have permissions to delete this team.' });
+        }
+        
+        return res.status(200).send({ message: 'Team removed successfully.' })
 
     } catch (error) {
         console.log(error);
         return res.status(500).send({ message: 'Server error, please try again later.' });
     }
 }
+
+// exports.deleteTeam = async (req, res) => {
+//     try {
+//         const userId = req.query.userId;
+//         const teamId = req.params.id;
+
+//         const user = await Player.findById(userId).select('isAdmin');
+//         const admin = user.isAdmin;
+//         const teamDelete = await Team.findById(teamId);
+
+//         if (!teamDelete) return res.status(404).send({ message: 'Team not found.' });
+
+//         // Check if the user making the request is the team leader.
+//         if (teamDelete.teamLeader.includes(userId) || admin) {
+//             for (const playerId of teamDelete.players) {
+//                 let removeTeamPlayer = await Player.findById(playerId);
+//                 if (removeTeamPlayer) {
+//                     await removeTeamPlayer.updateOne({ $unset: { team: 1 }, teamLeader: false });
+//                 }
+//             }
+
+//             // Delete team after updating players' team
+//             await Team.findByIdAndRemove(teamId);
+
+//             // Eliminar la imagen y la carpeta asociada al equipo
+//             const imagePath = path.join(__dirname, '../public/uploads/teams', teamDelete.folder, 'nombre_archivo_imagen.extensión');
+//             if (fs.existsSync(imagePath)) {
+//                 fs.unlinkSync(imagePath);
+//                 console.log('Imagen eliminada correctamente');
+                
+//                 const teamFolderPath = path.join(__dirname, '../public/uploads/teams', teamDelete.folder);
+//                 if (fs.existsSync(teamFolderPath)) {
+//                     fs.rmdirSync(teamFolderPath, { recursive: true });
+//                     console.log('Carpeta del equipo eliminada correctamente');
+//                 }
+//             } else {
+//                 console.log('La imagen no existe o ya ha sido eliminada');
+//             }
+
+//             return res.status(200).send({ message: 'Team removed successfully.' });
+//         } else {
+//             return res.status(403).send({ message: 'You do not have permissions to delete this team.' });
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).send({ message: 'Server error, please try again later.' });
+//     }
+// };

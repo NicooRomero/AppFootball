@@ -84,3 +84,55 @@ export async function editTeamApi(id, data) {
 
     return result;
 }
+
+// Upload team img
+export async function uploadTeamImgApi(id, formData) {
+    const result = await clientAxios.put(`/team/upload/image/${id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(res => {
+        return res
+    })
+    .catch(err => {
+        return err
+    })
+
+    return result;
+}
+
+
+// Delete team
+export async function deleteApiTeam(teamId, userId) {
+    const result = clientAxios.delete(`/team/${teamId}?userId=${userId}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        return res;
+    })
+    .catch(err => {
+        return err;
+    })
+
+    return result;
+}
+
+// Remove player of team
+export async function removePlayerTeamApi(playerId, tLeaderId){
+    const result = clientAxios.patch(`/team/${playerId}?tLeaderId=${tLeaderId}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        return res;
+    })
+    .catch(err => {
+        return err;
+    })
+
+    return result;
+}

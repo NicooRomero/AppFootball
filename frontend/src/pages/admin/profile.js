@@ -55,7 +55,7 @@ export default function profile() {
                             </div>
                         </div>
                         <div className="">
-                            <Team data={data} />
+                            <Team data={data} setReloadUser={setReloadUser} />
                         </div>
                         <div className="col-start-2 col-end-4 row-start-4 row-end-6">
                             <Password idUser={idUser} />

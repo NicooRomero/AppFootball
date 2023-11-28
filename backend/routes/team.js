@@ -19,9 +19,10 @@ const storage = multer.diskStorage({
         if (isValid) {
             uploadError = null
         }
+        console.log(file);
         
-        const teamName = `${req.body.teamLeader}`;
-        const uploadPath = path.join('public/uploads/teams/', teamName);
+        const teamId = `${req.params.id}`;
+        const uploadPath = path.join('public/uploads/teams/', teamId);
         
         // if team folder already exist, update file
         if (fs.existsSync(uploadPath)) {
@@ -48,8 +49,10 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)  // default
         //const fileName = `${req.body.name}_${req.body.lastname}`;
+        const fileName = file.originalname;
+        const noExtName = fileName.slice(0, fileName.lastIndexOf('.'));
         const extension = FILE_TYPE_MAP[file.mimetype];
-        cb(null, `${req.body.name}-${Date.now()}.${extension}`)
+        cb(null, `${noExtName}-${Date.now()}.${extension}`)
     }
 })
 
@@ -61,6 +64,7 @@ router.post('/', teamController.addTeam);
 router.post('/send-request', teamController.addPlayerTeam);
 router.post('/accept-request', teamController.acceptJoinTeam);
 router.put('/:id', teamController.updateTeam);
+router.put('/upload/image/:id', upload.single('image'), teamController.uploadTeamImg);
 router.patch('/:id', teamController.removePlayerTeam);
 router.delete('/:id', teamController.deleteTeam);
 
