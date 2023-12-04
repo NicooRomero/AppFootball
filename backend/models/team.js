@@ -53,6 +53,9 @@ const teamSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    championships: [{
+        type: String,
+    }],
     social:{
         instagram: {
             type: String

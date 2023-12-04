@@ -30,6 +30,20 @@ exports.getUsers = async (req, res) => {
     }
 }
 
+exports.totalUsers = async (req, res) => {
+    try {
+
+            let totalPlayers = await Player.countDocuments();
+            let totalTeams = await Team.countDocuments();
+
+            return res.status(200).send({ totalPlayers, totalTeams })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Server error, please try again later.' });
+    }
+}
+
 exports.getUser = async (req, res) => {
     const params = req.params;
 

@@ -158,3 +158,20 @@ export async function leaveTeamApi(id) {
         })
     return result;
 }
+
+// Total count
+export async function getApiTotalCount() {
+    const result = await clientAxios.get('/user/count', {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            return response.data
+        })
+        .catch(err => {
+            return err
+        })
+
+    return result;
+}

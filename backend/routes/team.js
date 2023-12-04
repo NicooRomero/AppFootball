@@ -19,7 +19,6 @@ const storage = multer.diskStorage({
         if (isValid) {
             uploadError = null
         }
-        console.log(file);
         
         const teamId = `${req.params.id}`;
         const uploadPath = path.join('public/uploads/teams/', teamId);

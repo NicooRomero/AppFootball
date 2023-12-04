@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const FILE_TYPE_MAP = {
     'image/png': 'png',
-    'image/jpeg': 'jpeg',
+    'image/jpeg': 'jpg',
     'image/jpg': 'jpg'
 }
 
@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
         if (isValid) {
             uploadError = null
         }
+        console.log(file);
         
         const tournament = `${req.body.name}`;
         const uploadPath = path.join('public/uploads/tournaments/', tournament);
@@ -46,18 +47,23 @@ const storage = multer.diskStorage({
 
     },
     filename: function (req, file, cb) {
-        //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)  // default
-        //const fileName = `${req.body.name}_${req.body.lastname}`;
+        const fileName = file.originalname;
+        const noExtName = fileName.slice(0, fileName.lastIndexOf('.'));
         const extension = FILE_TYPE_MAP[file.mimetype];
-        cb(null, `${req.body.name}-${Date.now()}.${extension}`)
+        cb(null, `${noExtName}.${extension}`)
     }
 });
 
 const upload = multer({ storage: storage });
 
 router.get('/', tournamentController.getTournaments);
-router.get('/:id', tournamentController.getFixture);
+router.get('/:id', tournamentController.getGame);
+router.get('/fixture/:id', tournamentController.getFixture);
+router.post('/teams/reset', tournamentController.resetTeamsValues);
+router.put('/:id', tournamentController.updateGame);
+router.put('/delete/fixture/:id', tournamentController.deleteFixture);
 router.post('/fixture/:id', tournamentController.setFixture);
 router.post('/', upload.single('image'), tournamentController.addTournament);
+router.delete('/:id', tournamentController.deleteTournament);
 
 module.exports = router;

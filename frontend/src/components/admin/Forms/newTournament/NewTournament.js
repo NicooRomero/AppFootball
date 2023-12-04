@@ -1,12 +1,66 @@
 import React, { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
+import { addNewTournament } from "@/api/tournament";
+import { useFormik } from "formik";
+import * as Yup from 'yup';
 
 export default function NewTournament(props) {  
 
-  const { teams } = props;
+  const { teams, setReload, setShowModal } = props;
+  const [newImage, setNewImage] = useState(null);
+  const [file, setFile] = useState(null);
+
+  const handleChangeImg = async (e) => {
+    const preview = e.target.files[0];
+    setFile(preview);
+
+    if (preview) {
+        
+        if (preview.size > 5 * 1024 * 1024) {
+            toast.error('The file is too large. A maximum size of 5M is allowed');
+            return;
+        }
+
+        if (preview.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                setNewImage(reader.result);
+            };
+            reader.readAsDataURL(preview);
+        } else {
+            toast.error('Only image files allowed (SVG, PNG, JPG o JPEG).');
+        }
+    }        
+};
+
+const formik = useFormik({
+  initialValues: initialValues(),
+  validationSchema: Yup.object(validationSchema()),
+  onSubmit: async(formData) => {
+
+    if(!file) {
+      toast.error('Please select an image to upload.')
+    } else {
+      formData.image = file;
+  
+      const result = await addNewTournament(formData)
+      if(result.status === 200) {
+        toast.success(result.data.message);
+        setReload(true);
+        setShowModal(false);
+      } else {
+          toast.error('An error occurred while trying to create tournament.')
+      }  
+
+    }
+
+  }
+})
 
   return (
     <div>
-      <form>
+      <form onSubmit={formik.handleSubmit}>
         <div className="grid gap-6 mb-6 md:grid-cols-2">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -14,10 +68,11 @@ export default function NewTournament(props) {
             </label>
             <input
               type="text"
-              id="first_name"
+              id="name"
+              name='name'
+              onChange={formik.handleChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Champions League"
-              required
             />
           </div>
           <div>
@@ -27,22 +82,24 @@ export default function NewTournament(props) {
             <input
               type="text"
               id="last_name"
+              name="season"
+              onChange={formik.handleChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="2022-23"
-              required
             />
           </div>
         </div>
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Select the teams
+            Select the teams participants
           </label>
           <select
             multiple
             id="teams"
+            name="participants"
+            onChange={formik.handleChange}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-            <option defaultValue>Choose the teams</option>
             {teams.map((team, i) => (
               <option value={team._id} key={i}>{team.name}</option>
             ))}
@@ -54,6 +111,8 @@ export default function NewTournament(props) {
           </label>
           <select
             id="lastChampion"
+            name="lastchampion"
+            onChange={formik.handleChange}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option defaultValue>Choose one team</option>
@@ -67,6 +126,8 @@ export default function NewTournament(props) {
             <label
               className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
             >
+              {newImage ? newImage && <img src={newImage} alt="Preview" style={{ maxWidth: '40%', maxHeight: '150px' }} />
+                :
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg
                   className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
@@ -91,7 +152,8 @@ export default function NewTournament(props) {
                   SVG, PNG, JPG or GIF (MAX. 800x400px)
                 </p>
               </div>
-              <input id="dropzone-file" type="file" className="hidden" />
+                }
+              <input id="dropzone-file" type="file" className="hidden" onChange={handleChangeImg} />
             </label>
           </div>
         </div>
@@ -104,4 +166,22 @@ export default function NewTournament(props) {
       </form>
     </div>
   );
+}
+
+function initialValues() {
+  return {
+    name: '',
+    season: '',
+    participants: [],
+    lastchampion: '',
+    image: ''
+  }
+}
+
+function validationSchema() {
+  return {
+    name: Yup.string().required(true),
+    season: Yup.string().required(true),
+    participants: Yup.array().required(true),
+  }
 }

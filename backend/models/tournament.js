@@ -19,13 +19,9 @@ const tournamentSchema = mongoose.Schema({
         required: true
     }],
     fixture: [{}],
-    organizer: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }],
     image: {
-        type: String
+        type: String,
+        default: ''
     },
 
 })

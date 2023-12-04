@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { getApiTournament } from "@/api/tournament";
-import { getApiTeams } from "@/api/teams";
+import { useUserContext } from "@/hooks/UserContext";
 import AdminLayout from "@/layout/AdminLayout";
 import TablePositions from "@/components/admin/Tournament/Table/TablePositions";
 import InfoTournament from "@/components/admin/Tournament/Info/InfoTournament";
@@ -11,25 +11,28 @@ export default function tournament() {
 
   const [tournament, setTournament] = useState([]);
   const [showFixture, setShowFixture] = useState(false);
+  const { reload, setReload } = useUserContext();
   const { user } = useAuth();
 
   useEffect(() => {
     (async () => {
       const data = await getApiTournament();
       setTournament(data);
+      setReload(false);
     })();
-  }, []);
+  }, [reload]);
 
-  return (
-    <AdminLayout>
-        <div className="flex flex-col items-center justify-center">
-            <div className="flex flex-col mt-6">
-                <div className="flex flex-row gap-2">
-                        {/* {showFixture ? <Fixture /> : <TablePositions teams={teams} />} */}
-                        <InfoTournament setShowFixture={setShowFixture} tournament={tournament} isAdmin={user?.isAdmin} />
-                </div>
-            </div>
-        </div>
-    </AdminLayout>
-  );
+
+    return (
+      <AdminLayout>
+          <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col mt-6">
+                  <div className="flex flex-row gap-2">
+                          {showFixture ? <Fixture tournamentId={tournament[0]?._id} isAdmin={user?.isAdmin} setReload={setReload} reload={reload} /> : <TablePositions teams={tournament[0]?.teams} />}
+                          <InfoTournament setShowFixture={setShowFixture} tournament={tournament} isAdmin={user?.isAdmin} setReload={setReload} />
+                  </div>
+              </div>
+          </div>
+      </AdminLayout>
+    );
 }

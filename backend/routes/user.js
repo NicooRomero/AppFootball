@@ -60,6 +60,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get('/', userController.getUsers);
+router.get('/count', userController.totalUsers);
 router.get('/search/player', userController.searchUsers);
 router.get('/:id', userController.getUser);
 router.post('/', upload.single('image'), userController.addUsers);

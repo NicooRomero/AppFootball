@@ -6,19 +6,13 @@ import { getAccToken } from '@/api/auth';
 
 export default function AdminLayout({ children }) {
     const { user, isLoading } = useAuth();
-    // console.log(user);
-    // console.log(isLoading);
-
+    
     useEffect(() => {
             const token = getAccToken()
             if (!token) {
                 typeof window !== 'undefined' && Router.push('/admin/login');
             }
     }, [])
-
-    // if (!user && isLoading) {
-    //     typeof window !== 'undefined' && Router.push('/admin/login');
-    // }
 
     if (user && !isLoading) {
         return (
