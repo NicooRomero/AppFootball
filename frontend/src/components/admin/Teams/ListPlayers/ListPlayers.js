@@ -3,6 +3,7 @@ import moment from "moment";
 import useAuth from "@/hooks/useAuth";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import Image from "next/image";
 import { removePlayerTeamApi } from "@/api/teams";
 import NoImageProfile from "../../../../../public/png/no-profile.png";
 
@@ -65,7 +66,7 @@ export default function ListPlayers(props) {
                 scope="row"
                 className="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white "
               >
-                <img
+                <Image
                   className="w-10 h-10 rounded-lg mr-4"
                   src={player?.image || NoImageProfile.src}
                   alt={index}
@@ -113,7 +114,7 @@ export default function ListPlayers(props) {
                     <li className="pb-3 sm:pb-4 mt-4">
                         <div className="flex items-center space-x-4">
                             <div className="flex-shrink-0">
-                                <img className="w-8 h-8 rounded" src={player.image} alt={player.namae} />
+                                <Image className="w-8 h-8 rounded" src={player.image} alt={player.namae} />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 truncate dark:text-white">

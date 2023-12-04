@@ -6,7 +6,8 @@ import useAuth from "@/hooks/useAuth";
 import ListPlayers from "../ListPlayers/ListPlayers";
 import TeamForm from "../../Forms/teamForm/TeamForm";
 import BasicModal from "@/components/Modal/BasicModal";
-import toast, { Toaster } from "react-hot-toast";
+import Image from "next/image";
+import toast from "react-hot-toast";
 import { deleteApiTeam } from "@/api/teams";
 import NoTeamImg from "../../../../../public/png/no-team.png";
 
@@ -205,7 +206,7 @@ export default function TableTeams(props) {
                   scope="row"
                   className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  <img
+                  <Image
                     className="w-10 h-10 rounded-full"
                     src={team.image || NoTeamImg.src}
                     alt={index}
@@ -224,7 +225,7 @@ export default function TableTeams(props) {
                 <td className="flex -space-x-4 px-6 py-4">
                   {team.players.map((img, i) => (
                     <div key={i}>
-                      <img
+                      <Image
                         className="w-10 h-10 border-2 border-white rounded-full dark:border-gray-800"
                         src={img.image}
                         alt={i}

@@ -1,8 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import Swal from 'sweetalert2'
-import toast from 'react-hot-toast';
-import { deleteApiNotification } from '@/api/notifications';
+import Image from 'next/image';
 
 export default function RequestsCard(props) {
 
@@ -48,7 +46,7 @@ export default function RequestsCard(props) {
                             <p className="text-sm font-normal text-gray-500 dark:text-gray-400"><span className='font-medium text-white ml-2'>{request.sender.name}</span> your invitation is pending to approval.</p>
                             <div className="flex p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
                                 <figcaption className="flex items-center justify-center space-x-3">
-                                    <img className="rounded-full w-9 h-9" src={request.receiver.image} alt={request.receiver.name} />
+                                    <Image className="rounded-full w-9 h-9" src={request.receiver.image} alt={request.receiver.name} />
                                     <div className="space-y-0.5 font-medium dark:text-white text-left">
                                         <div className="text-sm text-gray-500 dark:text-gray-400">You have invited <span className="space-y-0.5 font-medium text-blue-400 text-left uppercase">{request.receiver.name}</span> to be part of your team</div>
                                         <div className="text-sm text-gray-500 dark:text-gray-400">status of your invitation is<span className={request.status === 'pending' ? 'font-medium text-yellow-400 uppercase' : request.status === 'accepted' ? 'font-medium text-green-400 uppercase' : 'font-medium text-red-400 uppercase'}> {request.status} </span> </div>

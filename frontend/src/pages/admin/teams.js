@@ -3,10 +3,10 @@ import AdminLayout from '@/layout/AdminLayout';
 import TableTeams from '@/components/admin/Teams/TeamsCard/TableTeams';
 import { getApiTeams } from '@/api/teams';
 
-export default function teams() {
+export default function Teams() {
 
     const [teams, setTeams] = useState([]);
-    const [reloadTeams, setReloadTeams] = useState(false);
+    const [reloadteams, setReloadTeams] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -14,7 +14,8 @@ export default function teams() {
             setTeams(response)
             setReloadTeams(false);
         })();
-    }, [reloadTeams]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reloadteams]);
 
     return (
         <AdminLayout>

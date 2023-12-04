@@ -6,6 +6,7 @@ import { editTeamApi, addNewTeam } from "@/api/teams";
 import { getApiPlayers } from "@/api/user";
 import ImageForm from "../imageForm/ImageForm";
 import NoTeamImg from "../../../../../public/png/no-team.png";
+import Image from "next/image";
 
 export default function TeamForm(props) {
   const inputError =
@@ -62,7 +63,7 @@ export default function TeamForm(props) {
                   onClick={() => setchangeImage(false)}
                   className="relative max-w-sm transition-all duration-300 cursor-pointer filter grayscale-0 hover:grayscale"
                 >
-                  <img
+                  <Image
                     className="rounded-xl h-40 w-40"
                     src={team?.image || NoTeamImg.src}
                     alt={team?.name}

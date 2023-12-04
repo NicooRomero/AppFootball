@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getAccToken } from '@/api/auth';
+import Image from 'next/image';
 import FormLogin from '@/components/admin/Forms/loginForm/FormLogin';
 
 export default function Login() {
@@ -11,12 +12,13 @@ export default function Login() {
         if (getAccToken()) {
             router.push('/admin/dashboard');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
             <div className="flex flex-col justify-center">
-                <img src='https://www.pngkey.com/png/full/182-1827326_do-every-thing-soccer-player-stock.png'  />
+                <Image src='https://www.pngkey.com/png/full/182-1827326_do-every-thing-soccer-player-stock.png' alt='home image'  />
                 <div className='flex flex-col absolute w-[600px] h-[500px]'>
                 <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">We invest in the world’s players potential</h1>
                 <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Here at Football App we focus on competitions where technic, innovation, and human capital can unlock long-term value and drive soccer growth.</p>

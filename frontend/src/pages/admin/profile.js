@@ -9,11 +9,14 @@ import Social from '@/components/admin/User/Social';
 import General from '@/components/admin/User/General';
 import Password from '@/components/admin/User/Password';
 
-export default function profile() {
+export default function Profile() {
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const [data, setData] = useState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const [loading, setLoading] = useState(true);
-    const [reloadUser, setReloadUser] = useState(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const [reloaduser, setReloadUser] = useState(false);
 
     const router = useRouter();
     const idUser = router.query.user;
@@ -21,13 +24,15 @@ export default function profile() {
     useEffect(() => {
         if (idUser) {
             (async () => {
+                // eslint-disable-next-line react-hooks/exhaustive-deps
                 const res = await getApiPlayer(idUser);
                 setData(res);
                 setLoading(false);
             })();
         }
         setReloadUser(false);
-    }, [reloadUser, router]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reloaduser, router]);
 
     return (
         <AdminLayout>

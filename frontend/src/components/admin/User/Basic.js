@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import BasicModal from '@/components/Modal/BasicModal';
 import UserForm from '../Forms/userForm/UserForm';
 import ImageForm from '../Forms/imageForm/ImageForm';
+import Image from 'next/image';
 import NoImageProfile from '../../../../public/png/no-profile.png';
 
 export default function Basic(props) {
@@ -27,7 +28,7 @@ export default function Basic(props) {
         <>
             <div className="flex justify-end px-4 pt-4">
                 <div className="flex flex-col items-center mt-4 pb-10">
-                    <img className="w-24 h-24 mb-3 rounded-full shadow-lg" src={data.image ? data.image  : NoImageProfile.src} alt="Profile image" />
+                    <Image className="w-24 h-24 mb-3 rounded-full shadow-lg" src={data.image ? data.image  : NoImageProfile.src} alt="Profile image" />
                     <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{data.name} {data.lastname}</h5>
                     <span className="text-sm text-gray-500 dark:text-gray-400">{data.email}</span>
                     <div className="flex mt-4 space-x-3 md:mt-6">

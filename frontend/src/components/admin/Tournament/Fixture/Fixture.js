@@ -3,6 +3,7 @@ import { getApiFixture, getApiGame } from "@/api/tournament";
 import ReactPaginate from "react-paginate";
 import MatchForm from "../../Forms/matchForm/MatchForm";
 import BasicModal from "@/components/Modal/BasicModal";
+import Image from "next/image";
 
 export default function Fixture(props) {
   const { tournamentId, isAdmin, reload, setReload } = props;
@@ -18,6 +19,7 @@ export default function Fixture(props) {
       setFixture(data);
       setReload(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
 
   const itemsPerPage = 1;
@@ -112,7 +114,7 @@ export default function Fixture(props) {
                         >
                           <td className="flex justify-between gap-4 items-center px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <img
+                              <Image
                                 className="w-10 h-10 mr-2 rounded-full"
                                 src={round.home.image}
                                 alt={round.home.name}
@@ -131,7 +133,7 @@ export default function Fixture(props) {
                           <td className="px-6 py-4 whitespace-nowrap">vs</td>
                           <td className="flex justify-between gap-4 items-center px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <img
+                              <Image
                                 className="w-10 h-10 rounded-full overflow-hidden"
                                 src={round.away.image}
                                 alt={round.away.name}
@@ -249,7 +251,7 @@ export default function Fixture(props) {
               href="https://flowbite.com/"
               className="flex items-center mb-2 border-gray-200 md:pe-4 md:me-4 md:border-e md:mb-0 dark:border-gray-600"
             >
-              <img
+              <Image
                 src="https://flowbite.com/docs/images/logo.svg"
                 className="h-6 me-2"
                 alt="Flowbite Logo"

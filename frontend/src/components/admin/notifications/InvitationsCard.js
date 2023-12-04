@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import Image from 'next/image';
 
 export default function InvitationsCard(props) {
 
@@ -16,7 +17,7 @@ export default function InvitationsCard(props) {
                             <p className="text-sm font-normal text-gray-500 dark:text-gray-400"><span className='font-medium text-white ml-2'>{invitation.recipient.name}</span> {invitation.message}</p>
                             <div className="flex p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
                                 <figcaption className="flex items-center justify-center space-x-3">
-                                    <img className="rounded-full w-9 h-9" src={invitation.sender.image} alt={invitation.sender.name} />
+                                    <Image className="rounded-full w-9 h-9" src={invitation.sender.image} alt={invitation.sender.name} />
                                     <div className="space-y-0.5 font-medium dark:text-white text-left">
                                         <div>{invitation.sender.name}</div>
                                         <div className="text-sm text-gray-500 dark:text-gray-400">He has invited you to join his team <span className='font-medium text-white'>{invitation.team.name}</span></div>

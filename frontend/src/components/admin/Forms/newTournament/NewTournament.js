@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { addNewTournament } from "@/api/tournament";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
+import Image from "next/image";
 
 export default function NewTournament(props) {  
 
@@ -126,7 +127,7 @@ const formik = useFormik({
             <label
               className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
             >
-              {newImage ? newImage && <img src={newImage} alt="Preview" style={{ maxWidth: '40%', maxHeight: '150px' }} />
+              {newImage ? newImage && <Image src={newImage} alt="Preview" style={{ maxWidth: '40%', maxHeight: '150px' }} />
                 :
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg

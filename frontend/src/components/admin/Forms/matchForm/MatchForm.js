@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useFormik } from "formik";
 import toast from "react-hot-toast";
-import { getApiGame, editApiGame } from "@/api/tournament";
+import { editApiGame } from "@/api/tournament";
+import Image from "next/image";
 
 export default function MatchForm(props) {
   const { game, tournamentId, setReload, setShowModal } = props;
@@ -68,7 +69,7 @@ export default function MatchForm(props) {
                   <span className="ml-2 font-medium">Match 1</span>
                 </td>
                 <td className="flex items-center px-6 py-4 whitespace-nowrap">
-                  <img
+                  <Image
                     className="w-10 h-10 mr-2 rounded-full"
                     src={game.home.image}
                     alt={game.home.name}
@@ -108,7 +109,7 @@ export default function MatchForm(props) {
                   <span className="ml-2 font-medium">Match 1</span>
                 </td>
                 <td className="flex items-center px-6 py-4 whitespace-nowrap">
-                  <img
+                  <Image
                     className="w-10 h-10 mr-2 rounded-full"
                     src={game.away.image}
                     alt={game.away.name}

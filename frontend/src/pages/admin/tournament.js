@@ -7,10 +7,11 @@ import TablePositions from "@/components/admin/Tournament/Table/TablePositions";
 import InfoTournament from "@/components/admin/Tournament/Info/InfoTournament";
 import Fixture from "@/components/admin/Tournament/Fixture/Fixture";
 
-export default function tournament() {
+export default function Tournament() {
 
   const [tournament, setTournament] = useState([]);
-  const [showFixture, setShowFixture] = useState(false);
+  const [showfixture, setShowFixture] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const { reload, setReload } = useUserContext();
   const { user } = useAuth();
 
@@ -20,6 +21,7 @@ export default function tournament() {
       setTournament(data);
       setReload(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
 
 
@@ -28,7 +30,7 @@ export default function tournament() {
           <div className="flex flex-col items-center justify-center">
               <div className="flex flex-col mt-6">
                   <div className="flex flex-row gap-2">
-                          {showFixture ? <Fixture tournamentId={tournament[0]?._id} isAdmin={user?.isAdmin} setReload={setReload} reload={reload} /> : <TablePositions teams={tournament[0]?.teams} />}
+                          {showfixture ? <Fixture tournamentId={tournament[0]?._id} isAdmin={user?.isAdmin} setReload={setReload} reload={reload} /> : <TablePositions teams={tournament[0]?.teams} />}
                           <InfoTournament setShowFixture={setShowFixture} tournament={tournament} isAdmin={user?.isAdmin} setReload={setReload} />
                   </div>
               </div>

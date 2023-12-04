@@ -2,6 +2,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { leaveTeamApi } from '@/api/user';
+import Image from 'next/image';
 import noTeamImg from '../../../../public/png/no-team.png';
 
 export default function Team(props) {
@@ -48,7 +49,7 @@ export default function Team(props) {
                             <li className="py-3 sm:py-4">
                                 <div className="flex items-center space-x-4">
                                     <div className="flex-shrink-0">
-                                        <img className="w-10 h-10 rounded-full" src={data?.team?.image || noTeamImg.src} alt="Team image" />
+                                        <Image className="w-10 h-10 rounded-full" src={data?.team?.image || noTeamImg.src} alt="Team image" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className='flex items-center'>

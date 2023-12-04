@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { getApiTeams } from "@/api/teams";
 import { setNewFixture, apiTeamsValuesReset, apiDeleteFixture, apiDeleteTournament } from "@/api/tournament";
 import BasicModal from "@/components/Modal/BasicModal";
+import Image from "next/image";
 import NewTournament from "../../Forms/newTournament/NewTournament";
 
 export default function InfoTournament(props) {
@@ -185,7 +186,7 @@ export default function InfoTournament(props) {
             : null }
           {tournament.length > 0 ?
           <div className="flex flex-col justify-center items-center pb-10">
-          <img
+          <Image
             className="w-24 h-24 mb-3 rounded-full shadow-lg"
             src={tournament[0].image}
             alt="Bonnie image"
@@ -228,7 +229,7 @@ export default function InfoTournament(props) {
               </p>
             </div>
             <div className="flex flex-col justify-center items-center mt-4 pb-4">
-              <img
+              <Image
                 className="w-24 h-24 mb-3 rounded-full shadow-lg"
                 src={tournament[0]?.lastChampion.image}
                 alt={tournament[0]?.lastChampion.name}

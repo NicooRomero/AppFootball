@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import Image from "next/image";
 
 export default function TablePositions(props) {
 
@@ -84,7 +85,7 @@ export default function TablePositions(props) {
                     <tr key={index} className="bg-black bg-opacity-20">
                       <td className="pl-4">{index + 1}</td>
                       <td className="flex px-6 py-4 whitespace-nowrap">
-                        <img className="w-5" src={team.image} alt="" />
+                        <Image className="w-5" src={team.image} alt="" />
                         <span className="ml-2 font-medium">{team.name}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

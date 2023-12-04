@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { uploadTeamImgApi } from '@/api/teams';
 import { uploadAvatarApi } from '@/api/user';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 export default function ImageForm(props) {
@@ -77,7 +78,7 @@ export default function ImageForm(props) {
                 className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 transition-all duration-300 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
             >
                 <div className="flex flex-col items-center justify-center p-6">
-                    {newImage ? newImage && <img src={newImage} className='mb-6' alt="Preview" style={{ maxWidth: '50%', maxHeight: '200px' }} />
+                    {newImage ? newImage && <Image src={newImage} className='mb-6' alt="Preview" style={{ maxWidth: '50%', maxHeight: '200px' }} />
                         :
                         <svg
                             className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
