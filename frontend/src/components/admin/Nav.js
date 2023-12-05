@@ -77,7 +77,7 @@ export default function Nav() {
                                             <Link href={`/admin/profile?user=${token.id}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Profile</Link>
                                         </li>
                                         <li>
-                                            <Link href={"/admin/login"} onClick={() => logout()} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</Link>
+                                            <Link href={"/"} onClick={() => logout()} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</Link>
                                         </li>
                                     </ul>
                                 </div>
