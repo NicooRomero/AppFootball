@@ -9,6 +9,21 @@ Módulos:
 Jugadores: Permite realizar operaciones CRUD (Crear, Leer, Actualizar y Eliminar) sobre los jugadores inscritos en el torneo.
 Equipos: Gestiona la información de los equipos participantes en el torneo, incluyendo sus detalles, jugadores asociados, etc.
 Torneo: Proporciona la funcionalidad para administrar los detalles del torneo en curso, generar fixture, modificar resultado de partidos.
+Invitaciones/Notificaciones: Por cada invitacion a formar parte de un equipo, llega la correspondiente notificacion. La cual los usuarios deberan aceptar.
+
+Roles: 
+Admin: Puede realizar todo.
+Team Leaders: Realizan acciones sobre su equipo, invitar jugadores, eliminar jugadores de su equipo.
+Jugadores: Actuan sobre su propio perfil
+
+USUARIOS DE PRUEBA:
+admin: admin@gmail.com
+Otros Usuarios: prueba2@gmail.com
+               juanpe@gmail.com 
+               davidsmith@email.com
+               modegaard@arsenal.com
+
+pw: 94694747 (misma para todos)
 
 Tecnologías Utilizadas
 Frontend:
