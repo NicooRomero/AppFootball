@@ -10,7 +10,7 @@ export default function AdminLayout({ children }) {
     useEffect(() => {
             const token = getAccToken()
             if (!token) {
-                typeof window !== 'undefined' && Router.push('/admin/login');
+                typeof window !== 'undefined' && Router.push('/');
             }
     }, [])
 
