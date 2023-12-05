@@ -31,12 +31,7 @@ Instala las dependencias:
 bash
 Copy code
 npm install
-Configuración de MongoDB:
-
-API_URL = /api/v1
-PORT = 4000
-DB_MONGO = mongodb+srv://theuserone:3DjqFhYuYRDjSaPvVR7S@cluster0.3cdzaki.mongodb.net/?retryWrites=true&w=majority
-SECRET = 'nmugve3t5dypt84ikflrwgxpt'
+Configuración de MongoDB
 
 Ejecutar la aplicación:
 
