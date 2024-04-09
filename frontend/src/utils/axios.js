@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const clientAxios = axios.create({
-    baseURL: 'http://localhost:4000/api/v1/'
+    baseURL: 'https://vps-3971710-x.dattaweb.com:5001/api/v1/'
 });
 
 export default clientAxios;
